@@ -10,6 +10,7 @@ import InfoLogo from "../Assets/InfoLogo.svg";
 export type CardType = {
   id: string;
   card: JSX.Element;
+  priority: number;
 };
 
 const Container = styled.div`
@@ -94,6 +95,13 @@ const HintText = styled.div`
   margin-left: 8px;
 `;
 
+const Stub = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: 45px;
+  color: #005c65;
+`;
+
 export const CardsContext = React.createContext<{
   cardsArray: CardType[];
 }>({ cardsArray: [] });
@@ -102,9 +110,14 @@ const Layout = () => {
   const [isEditModeOpen, setEditModeState] = useState(false);
   const [cards, setCard] = useState([] as CardType[]);
   const [taskText, setTaskText] = useState("");
+  const [priority, setPriority] = useState(0);
 
   const handleChange = (e: any) => {
     setTaskText(e.target.value);
+  };
+
+  const checkBoxTypeHandler = (type: number) => {
+    setPriority(type);
   };
 
   const addButtonPressed = () => {
@@ -115,8 +128,14 @@ const Layout = () => {
       cards.concat({
         id,
         card: (
-          <Card id={id} taskTitle={taskText} onRemoveClick={onRemoveClick} />
+          <Card
+            id={id}
+            taskTitle={taskText}
+            onRemoveClick={onRemoveClick}
+            priority={priority}
+          />
         ),
+        priority,
       })
     );
   };
@@ -134,7 +153,11 @@ const Layout = () => {
   };
 
   const renderCards = () => {
-    return cards.map((item) => {
+    const copied = [...cards];
+    const sortedArr = copied.sort(
+      (a: CardType, b: CardType) => b.priority - a.priority
+    );
+    return sortedArr.map((item) => {
       return item.card;
     });
   };
@@ -154,6 +177,8 @@ const Layout = () => {
     );
   };
 
+  console.info(priority);
+
   return (
     <CardsContext.Provider value={{ cardsArray: cards }}>
       <Container>
@@ -163,9 +188,14 @@ const Layout = () => {
             handleChange={handleChange}
             addButtonPressed={addButtonPressed}
             closeButtonPressed={editModeCloseButtonPressed}
+            checkBoxTypeHandler={checkBoxTypeHandler}
           />
         )}
-        {renderCards()}
+        {cards.length !== 0 || isEditModeOpen ? (
+          renderCards()
+        ) : (
+          <Stub>You have no active tasks</Stub>
+        )}
       </Container>
     </CardsContext.Provider>
   );
