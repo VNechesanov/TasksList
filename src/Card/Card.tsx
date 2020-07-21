@@ -6,44 +6,56 @@ import { CardsContext, CardType } from "../Layout/Layout";
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   padding: 0;
   margin-bottom: 20px;
   width: 100%;
-  height: 100px;
-  border-radius: 2px;
-  background-color: #fbfeff;
-  box-shadow: 0px 9px 3px -2px #b1e5ff;
+  height: 80px;
+  border-radius: 5px;
+  background-color: #f1fdff;
+  box-shadow: 0px 6px 3px 3px #b1e5ff;
 `;
 
 const Close = styled.div`
   background: url(${CloseSign});
+  display: flex;
+  align-self: flex-end;
   width: 15px;
   height: 15px;
   background-size: 100% 100%;
-  margin-bottom: 15px;
+  margin-right: 15px;
+  margin-top: 15px;
+  cursor: pointer;
+`;
+
+const TaskTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: 25px;
+  color: #005c65;
 `;
 
 type Props = {
   id: string;
+  taskTitle: string;
   onRemoveClick: (filteredCards: CardType[]) => void;
 };
 
 const Card = (props: Props) => {
-  const { id, onRemoveClick } = props;
+  const { id, taskTitle, onRemoveClick } = props;
   const { cardsArray } = useContext(CardsContext);
 
   const remobeButtonClick = () => {
-    const copied = [...(cardsArray as CardType[])];
-    const filtered = copied.filter((c) => c.id !== id);
+    const copiedArray = [...(cardsArray as CardType[])];
+    const filteredArray = copiedArray.filter((c) => c.id !== id);
 
-    onRemoveClick(filtered);
+    onRemoveClick(filteredArray);
   };
 
   return (
     <Container>
-      {id}
       <Close onClick={() => remobeButtonClick()} />
+      <TaskTitle>{taskTitle}</TaskTitle>
     </Container>
   );
 };
