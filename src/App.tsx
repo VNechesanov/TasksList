@@ -8,6 +8,7 @@ const Container = styled.div`
   justify-content: center;
   padding: 0;
   margin-top: 30px;
+  margin-bottom: 30px;
 `;
 
 const App = () => {

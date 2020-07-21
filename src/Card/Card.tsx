@@ -3,10 +3,15 @@ import styled from "styled-components";
 
 import CloseSign from "../Assets/CloseSign.svg";
 import { CardsContext, CardType } from "../Layout/Layout";
+import { Priority, priorityColorCodes } from "../EditeModeCard/EditeModeCard";
+
+type MarkerColor = {
+  color: string;
+};
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   padding: 0;
   margin-bottom: 20px;
   width: 100%;
@@ -35,14 +40,29 @@ const TaskTitle = styled.div`
   color: #005c65;
 `;
 
+const PriorityMarker = styled.div<MarkerColor>`
+  height: 100%;
+  width: 10px;
+  left: 0;
+  border-radius: 5px 0px 0px 5px;
+  background-color: ${(props) => props.color};
+`;
+
+const LocalWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
 type Props = {
   id: string;
   taskTitle: string;
   onRemoveClick: (filteredCards: CardType[]) => void;
+  priority: number;
 };
 
 const Card = (props: Props) => {
-  const { id, taskTitle, onRemoveClick } = props;
+  const { id, taskTitle, onRemoveClick, priority } = props;
   const { cardsArray } = useContext(CardsContext);
 
   const remobeButtonClick = () => {
@@ -52,10 +72,27 @@ const Card = (props: Props) => {
     onRemoveClick(filteredArray);
   };
 
+  const getMarkerColor = () => {
+    switch (priority) {
+      case Priority.low:
+        return priorityColorCodes.low;
+      case Priority.medium:
+        return priorityColorCodes.medium;
+      case Priority.max:
+        return priorityColorCodes.max;
+
+      default:
+        return "";
+    }
+  };
+
   return (
     <Container>
-      <Close onClick={() => remobeButtonClick()} />
-      <TaskTitle>{taskTitle}</TaskTitle>
+      <PriorityMarker color={getMarkerColor()} />
+      <LocalWrapper>
+        <Close onClick={() => remobeButtonClick()} />
+        <TaskTitle>{taskTitle}</TaskTitle>
+      </LocalWrapper>
     </Container>
   );
 };
