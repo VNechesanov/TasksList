@@ -65,7 +65,7 @@ const Card = (props: Props) => {
   const { id, taskTitle, onRemoveClick, priority } = props;
   const { cardsArray } = useContext(CardsContext);
 
-  const remobeButtonClick = () => {
+  const removeButtonClick = () => {
     const copiedArray = [...(cardsArray as CardType[])];
     const filteredArray = copiedArray.filter((c) => c.id !== id);
 
@@ -90,7 +90,7 @@ const Card = (props: Props) => {
     <Container>
       <PriorityMarker color={getMarkerColor()} />
       <LocalWrapper>
-        <Close onClick={() => remobeButtonClick()} />
+        <Close onClick={() => removeButtonClick()} />
         <TaskTitle>{taskTitle}</TaskTitle>
       </LocalWrapper>
     </Container>

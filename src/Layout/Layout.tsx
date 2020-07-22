@@ -177,8 +177,6 @@ const Layout = () => {
     );
   };
 
-  console.info(priority);
-
   return (
     <CardsContext.Provider value={{ cardsArray: cards }}>
       <Container>
