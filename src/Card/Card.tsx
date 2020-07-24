@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import CloseSign from "../Assets/CloseSign.svg";
+import PlusSign from "../Assets/PlusSign.svg";
 import { CardsContext, CardType } from "../Layout/Layout";
 import { Priority, priorityColorCodes } from "../EditeModeCard/EditeModeCard";
 
@@ -22,7 +22,7 @@ const Container = styled.div`
 `;
 
 const Close = styled.div`
-  background: url(${CloseSign});
+  background: url(${PlusSign});
   display: flex;
   align-self: flex-end;
   width: 15px;
@@ -30,6 +30,7 @@ const Close = styled.div`
   background-size: 100% 100%;
   margin-right: 15px;
   margin-top: 15px;
+  transform: rotate(45deg);
   cursor: pointer;
 `;
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 
-import CloseSign from "../Assets/CloseSign.svg";
+import PlusSign from "../Assets/PlusSign.svg";
 
 type CheckBoxProps = {
   clickedBox: number;
@@ -67,13 +67,14 @@ const AddButton = styled.div`
 `;
 
 const Close = styled.div`
-  background: url(${CloseSign});
+  background: url(${PlusSign});
   display: flex;
   align-self: flex-end;
   width: 15px;
   height: 15px;
   background-size: 100% 100%;
   margin-right: 15px;
+  transform: rotate(45deg);
   cursor: pointer;
 `;
 
