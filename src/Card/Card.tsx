@@ -2,12 +2,17 @@ import React, { useContext } from "react";
 import styled from "styled-components";
 
 import PlusSign from "../Assets/PlusSign.svg";
-import { CardsContext, CardType } from "../Layout/Layout";
+import { CardsContext, CardItem } from "../Layout/Layout";
 import { Priority, priorityColorCodes } from "../EditeModeCard/EditeModeCard";
+import { saveCardsToLocalStorage } from "../store";
 
 type MarkerColor = {
   color: string;
 };
+
+type FinishedTask = {
+  isMarkerChecked: boolean;
+}
 
 const Container = styled.div`
   display: flex;
@@ -34,11 +39,12 @@ const Close = styled.div`
   cursor: pointer;
 `;
 
-const TaskTitle = styled.div`
+const TaskTitle = styled.div<FinishedTask>`
   display: flex;
   justify-content: center;
   font-size: 25px;
   color: #005c65;
+  opacity: ${(props) => props.isMarkerChecked ? 0.2 : 1};
 `;
 
 const PriorityMarker = styled.div<MarkerColor>`
@@ -55,21 +61,45 @@ const LocalWrapper = styled.div`
   width: 100%;
 `;
 
-type Props = {
+const CheckMarker = styled.div`
+  align-self: center;
+  margin-top: 11px;
+  margin-left: 15px;
+`;
+
+export type CardProps = {
   id: string;
   taskTitle: string;
-  onRemoveClick: (filteredCards: CardType[]) => void;
+  onRemoveClick: (filteredCards: CardItem[]) => void;
+  isFinished: boolean;
+  isMarkerChecked: (index: number, item: CardItem) => void;
   priority: number;
 };
 
-const Card = (props: Props) => {
-  const { id, taskTitle, onRemoveClick, priority } = props;
+const Card = (props: CardProps) => {
+  const { id, taskTitle, onRemoveClick, isFinished, isMarkerChecked, priority } = props;
   const { cardsArray } = useContext(CardsContext);
 
-  const removeButtonClick = () => {
-    const copiedArray = [...(cardsArray as CardType[])];
-    const filteredArray = copiedArray.filter((c) => c.id !== id);
+  const newCardsArr = [...cardsArray];
+  let index: number = 0;
 
+  const handleMarkerClick = () => {
+    const foundItem = newCardsArr.find(n => n.id === id);
+    index = newCardsArr.indexOf(foundItem as CardItem);
+    newCardsArr[index].isFinished = !newCardsArr[index].isFinished;
+
+    saveCardsToLocalStorage(newCardsArr);
+    isMarkerChecked(index, newCardsArr[index]);
+  }
+
+  saveCardsToLocalStorage(newCardsArr);
+
+  const removeButtonClick = () => {
+    const copiedArray = [...(cardsArray as CardItem[])];
+    const filteredArray = copiedArray.filter((c) => c.id !== id);
+    if (cardsArray.length === 1) {
+      saveCardsToLocalStorage([]);
+    }
     onRemoveClick(filteredArray);
   };
 
@@ -87,12 +117,33 @@ const Card = (props: Props) => {
     }
   };
 
+  const checkMarker =
+    <svg width="25" height="25" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect
+        x="0.5"
+        y="0.5"
+        width="11"
+        height="11"
+        rx="1.5"
+        fill={isFinished ? getMarkerColor() : 'none'}
+        stroke={getMarkerColor()}
+        strokeLinejoin="round"
+      />
+
+      {isFinished && <path d="M3 6L5.18182 8L9 4" stroke="#fff" />}
+    </svg>
+
   return (
-    <Container>
+    <Container >
       <PriorityMarker color={getMarkerColor()} />
+      <CheckMarker
+        onClick={() => handleMarkerClick()}
+      >
+        {checkMarker}
+      </CheckMarker>
       <LocalWrapper>
         <Close onClick={() => removeButtonClick()} />
-        <TaskTitle>{taskTitle}</TaskTitle>
+        <TaskTitle isMarkerChecked={isFinished}>{taskTitle}</TaskTitle>
       </LocalWrapper>
     </Container>
   );

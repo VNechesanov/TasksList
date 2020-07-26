@@ -15,7 +15,7 @@ export enum Priority {
 
 export const priorityColorCodes = {
   low: "#82FFDD",
-  medium: "#FDFF73",
+  medium: "#EBE700",
   max: "#FF8787",
 };
 
@@ -105,17 +105,17 @@ const CheckBox = styled.div`
   margin-top: 10px;
 `;
 
-const LowPriority = styled(CheckBox)<CheckBoxProps>`
+const LowPriority = styled(CheckBox) <CheckBoxProps>`
   background-color: ${(props) =>
     props.clickedBox === Priority.low ? priorityColorCodes.low : "#fff"};
 `;
 
-const MediumPriority = styled(CheckBox)<CheckBoxProps>`
+const MediumPriority = styled(CheckBox) <CheckBoxProps>`
   background-color: ${(props) =>
     props.clickedBox === Priority.medium ? priorityColorCodes.medium : "#fff"};
 `;
 
-const HighPriority = styled(CheckBox)<CheckBoxProps>`
+const HighPriority = styled(CheckBox) <CheckBoxProps>`
   background-color: ${(props) =>
     props.clickedBox === Priority.max ? priorityColorCodes.max : "#fff"};
 `;
