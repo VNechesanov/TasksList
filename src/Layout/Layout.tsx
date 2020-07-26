@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import _uniqueId from "lodash/uniqueId";
+import _isEqual from "lodash/isEqual";
 
 import Card from "../Card/Card";
 import EditModeCard from "../EditeModeCard/EditeModeCard";
 import PlusSign from "../Assets/PlusSign.svg";
 import InfoLogo from "../Assets/InfoLogo.svg";
+import { getCardsfromLocalStorage } from "../store";
 
-export type CardType = {
+export type CardItem = {
   id: string;
-  card: JSX.Element;
+  taskTitle: string;
   priority: number;
+  isFinished: boolean;
 };
 
 const Container = styled.div`
@@ -103,13 +106,13 @@ const Stub = styled.div`
 `;
 
 export const CardsContext = React.createContext<{
-  cardsArray: CardType[];
+  cardsArray: CardItem[];
 }>({ cardsArray: [] });
 
 const Layout = () => {
   const [isEditModeOpen, setEditModeState] = useState(false);
-  const [cards, setCard] = useState([] as CardType[]);
-  const [taskText, setTaskText] = useState("");
+  const [cardsProps, setCardProps] = useState([] as CardItem[]);
+  const [taskTitle, setTaskText] = useState("");
   const [priority, setPriority] = useState(0);
 
   const handleChange = (e: any) => {
@@ -124,18 +127,12 @@ const Layout = () => {
     setEditModeState(false);
     const id: string = _uniqueId();
 
-    setCard(
-      cards.concat({
+    setCardProps(
+      cardsProps.concat({
         id,
-        card: (
-          <Card
-            id={id}
-            taskTitle={taskText}
-            onRemoveClick={onRemoveClick}
-            priority={priority}
-          />
-        ),
+        taskTitle,
         priority,
+        isFinished: false
       })
     );
   };
@@ -144,22 +141,54 @@ const Layout = () => {
     setEditModeState(false);
   };
 
-  const onRemoveClick = (filteredCards: CardType[]) => {
-    setCard(filteredCards);
+  const onRemoveClick = (filteredCards: CardItem[]) => {
+    setCardProps(filteredCards);
   };
+
+  const isMarkerChecked = (index: number, item: CardItem) => {
+    const copiedCardsProps = [...cardsProps];
+
+    copiedCardsProps[index] = item;
+
+    setCardProps(copiedCardsProps);
+  }
 
   const plusButtonClicked = () => {
     setEditModeState(true);
   };
 
+  useEffect(() => {
+    const cardPropsFromStorage = getCardsfromLocalStorage();
+
+    if (!_isEqual(cardPropsFromStorage, cardsProps)) {
+      setCardProps(cardsProps.concat(cardPropsFromStorage))
+    }
+
+  }, [cardsProps]);
+
   const renderCards = () => {
-    const copied = [...cards];
+    const copied = [...cardsProps];
     const sortedArr = copied.sort(
-      (a: CardType, b: CardType) => b.priority - a.priority
+      (a: CardItem, b: CardItem) => b.priority - a.priority
     );
-    return sortedArr.map((item) => {
-      return item.card;
+
+    const cardsArr: JSX.Element[] = []
+
+    sortedArr.forEach((item) => {
+      cardsArr.push(
+        <Card
+          key={_uniqueId()}
+          id={item.id}
+          taskTitle={item.taskTitle}
+          onRemoveClick={onRemoveClick}
+          isFinished={item.isFinished}
+          isMarkerChecked={isMarkerChecked}
+          priority={item.priority}
+        />
+      )
     });
+
+    return cardsArr;
   };
 
   const renterTabBar = () => {
@@ -178,7 +207,7 @@ const Layout = () => {
   };
 
   return (
-    <CardsContext.Provider value={{ cardsArray: cards }}>
+    <CardsContext.Provider value={{ cardsArray: cardsProps }}>
       <Container>
         {renterTabBar()}
         {isEditModeOpen && (
@@ -189,11 +218,11 @@ const Layout = () => {
             checkBoxTypeHandler={checkBoxTypeHandler}
           />
         )}
-        {cards.length !== 0 || isEditModeOpen ? (
+        {cardsProps.length !== 0 || isEditModeOpen ? (
           renderCards()
         ) : (
-          <Stub>You have no active tasks</Stub>
-        )}
+            <Stub>You have no active tasks</Stub>
+          )}
       </Container>
     </CardsContext.Provider>
   );
