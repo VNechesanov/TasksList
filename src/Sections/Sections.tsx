@@ -15,6 +15,16 @@ const HeaderWrapper = styled.div`
   width: 100%;
 `;
 
+const Stub = styled.div`
+  display: flex;
+  justify-content: center;
+  font-size: 65px;
+  color: #F2F2F2;
+  height: 100%;
+  align-items: center;
+  text-align: center;
+`;
+
 type Props = {
   getLayoutsArray: (items: LayoutItem[]) => void;
 }
@@ -92,7 +102,7 @@ const Sections = (props: Props) => {
           closeButtonPressed={editModeCloseButtonPressed}
         />
       )}
-      {renderSections()}
+      {layoutItems.length !== 0 || isEditModeOpen ? renderSections() : <Stub>You have no sections</Stub>}
     </BaseContainer>
   )
 };

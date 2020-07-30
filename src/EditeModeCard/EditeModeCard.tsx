@@ -14,9 +14,9 @@ export enum Priority {
 }
 
 export const priorityColorCodes = {
-  low: "#82FFDD",
-  medium: "#EBE700",
-  max: "#FF8787",
+  low: "#d9ebe9",
+  medium: "#798f8c",
+  max: "#0e1821",
 };
 
 const hintAnimation = keyframes`
@@ -39,8 +39,8 @@ const Container = styled.div`
   width: 60%;
   height: auto;
   border-radius: 5px;
-  background-color: #cafff5;
-  box-shadow: 0px 6px 3px 3px #b1e5ff;
+  background-color: #fff;
+  /* box-shadow: 0px 6px 3px 3px #484848; */
   animation: ${hintAnimation} 0.3s ${(props) => props.theme.animationTiming};
 `;
 
@@ -61,7 +61,7 @@ const AddButton = styled.div`
   width: 80px;
   margin-top: 14px;
   border-radius: 2px;
-  background-color: #fcfcfc;
+  background-color: #E7E7E7;
   align-items: center;
   font-size: 12px;
   cursor: pointer;
@@ -101,6 +101,7 @@ const PriorityContainer = styled.div`
 const CheckBox = styled.div`
   width: 15px;
   height: 15px;
+  border: 0.5px solid #E7E7E7;
   border-radius: 2px;
   margin-left: 5px;
   margin-top: 10px;

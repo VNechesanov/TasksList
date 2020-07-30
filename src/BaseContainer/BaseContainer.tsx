@@ -14,8 +14,8 @@ const Container = styled.div<ContainerHeight>`
   width: ${(props) => props.width};
   height: ${(props) => `${props.height}px`};
   border-radius: 5px;
-  background-color: #ddfaff;
-  box-shadow: 0px 6px 3px 3px #70cede;
+  background-color: #979797;
+  box-shadow: 5px 12px 32px #494949;
 `;
 
 type Props = {

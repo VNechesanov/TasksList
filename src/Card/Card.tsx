@@ -22,8 +22,7 @@ const Container = styled.div`
   width: 90%;
   height: 80px;
   border-radius: 5px;
-  background-color: #f1fdff;
-  box-shadow: 0px 6px 3px 3px #b1e5ff;
+  background-color: #fff;
 `;
 
 const Close = styled.div`
@@ -49,7 +48,7 @@ const TaskTitle = styled.div<FinishedTask>`
 
 const PriorityMarker = styled.div<MarkerColor>`
   height: 100%;
-  width: 10px;
+  width: 15px;
   left: 0;
   border-radius: 5px 0px 0px 5px;
   background-color: ${(props) => props.color};

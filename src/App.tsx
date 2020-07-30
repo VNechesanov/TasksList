@@ -48,7 +48,12 @@ const App = () => {
         <Sections getLayoutsArray={layoutsArray} />
       </SectionsContainer>
       <LayoutContainer>
-        {!_isEmpty(layout) && <Layout storageKey={layout.id} title={layout.title} />}
+        {_isEmpty(layout)
+          ?
+          <Layout storageKey={''} title={''} />
+          :
+          <Layout storageKey={layout.id} title={layout.title} />
+        }
       </LayoutContainer>
     </Container>
   );

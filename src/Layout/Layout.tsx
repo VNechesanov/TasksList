@@ -16,15 +16,6 @@ export type CardItem = {
   isFinished: boolean;
 };
 
-const Stub = styled.div`
-  display: flex;
-  justify-content: center;
-  font-size: 65px;
-  color: #005c65;
-  height: 100%;
-  align-items: center;
-`;
-
 const HeaderWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -37,7 +28,7 @@ const Title = styled.div`
   font-size: 17px;
   line-height: 15px;
   margin-left: 42px;
-  color: #005c65;
+  color: #F2F2F2;
 `;
 
 const CardsArea = styled.div`
@@ -161,13 +152,11 @@ const Layout = (props: Props) => {
           isCheckBoxNeed
         />
       )}
-      {cardsProps.length !== 0 || isEditModeOpen ? (
+      {(cardsProps.length !== 0 || isEditModeOpen) && (
         <CardsArea>
           {renderCards()}
         </CardsArea>
-      ) : (
-          <Stub>You have no active tasks</Stub>
-        )}
+      )}
     </BaseContainer>
   );
 };
