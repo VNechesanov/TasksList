@@ -16,14 +16,17 @@ export type CardItem = {
   isFinished: boolean;
 };
 
-const Container = styled.div`
+type ContainerHeight = {
+  height: number;
+}
+
+const Container = styled.div<ContainerHeight>`
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 15px;
-  margin: 0;
-  width: 500px;
-  min-height: 130px;
+  width: 80%;
+  height: ${(props) => `${props.height}px`};
   border-radius: 5px;
   background-color: #ddfaff;
   box-shadow: 0px 6px 3px 3px #70cede;
@@ -32,6 +35,11 @@ const Container = styled.div`
 const TabBar = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
+  width: 50%;
+  margin-bottom: 15px;
+  margin-right: 58px;
+  margin-bottom: 15px;
 `;
 
 const PlusButton = styled.div`
@@ -49,6 +57,7 @@ const InfoSign = styled.div`
   min-height: 15px;
   background-size: 100% 100%;
   margin-bottom: 15px;
+  margin-left: 5px;
   cursor: pointer;
 `;
 
@@ -64,7 +73,7 @@ const hintAnimation = keyframes`
 
 const Hint = styled.div`
   position: relative;
-  margin-left: 15px;
+  margin-right: 15px;
   align-self: center;
   text-align: center;
 `;
@@ -73,18 +82,18 @@ const PopUpBox = styled.div`
   position: absolute;
   visibility: hidden;
   white-space: nowrap;
-  width: auto;
+  width: 104px;
   overflow: hidden;
   display: flex;
   height: 16px;
   font-size: 11px;
   line-height: 12px;
   color: #a9a9a9;
-  border-radius: 16px 5px 5px 16px;
+  border-radius: 5px 16px 16px 5px;
   line-height: 16px;
   padding: 8px 10px;
   top: -8px;
-  left: -10px;
+  left: -95px;
   background-color: #fff;
   box-shadow: 5px 12px 32px rgba(147, 147, 149, 0.2);
 
@@ -95,25 +104,54 @@ const PopUpBox = styled.div`
 `;
 
 const HintText = styled.div`
-  margin-left: 8px;
+  margin-left: 5px;
 `;
 
 const Stub = styled.div`
   display: flex;
   justify-content: center;
-  font-size: 45px;
+  font-size: 65px;
+  color: #005c65;
+  height: 100%;
+  align-items: center;
+`;
+
+const HeaderWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`;
+
+const Title = styled.div`
+  width: 50%; 
+  left: 0;
+  font-size: 17px;
+  line-height: 15px;
+  margin-left: 42px;
   color: #005c65;
 `;
 
-export const CardsContext = React.createContext<{
-  cardsArray: CardItem[];
-}>({ cardsArray: [] });
+const CardsArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
+`;
 
-const Layout = () => {
+type Props = {
+  storageKey: string;
+  title: string;
+}
+
+const Layout = (props: Props) => {
+  const { storageKey, title } = props;
   const [isEditModeOpen, setEditModeState] = useState(false);
   const [cardsProps, setCardProps] = useState([] as CardItem[]);
   const [taskTitle, setTaskText] = useState("");
   const [priority, setPriority] = useState(0);
+  const [storeId, setId] = useState(storageKey);
 
   const handleChange = (e: any) => {
     setTaskText(e.target.value);
@@ -158,16 +196,21 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    const cardPropsFromStorage = getCardsfromLocalStorage();
+    const cardPropsFromStorage = getCardsfromLocalStorage(storageKey);
 
     if (!_isEqual(cardPropsFromStorage, cardsProps)) {
       setCardProps(cardsProps.concat(cardPropsFromStorage))
     }
 
-  }, [cardsProps]);
+    if (storeId !== storageKey) {
+      setCardProps([]);
+      setId(storageKey)
+    }
+
+  }, [cardsProps, storageKey, storeId, setId]);
 
   const renderCards = () => {
-    const copied = [...cardsProps];
+    const copied = storeId !== storageKey ? [] : [...cardsProps];
     const sortedArr = copied.sort(
       (a: CardItem, b: CardItem) => b.priority - a.priority
     );
@@ -179,11 +222,13 @@ const Layout = () => {
         <Card
           key={_uniqueId()}
           id={item.id}
+          cardsArray={cardsProps}
           taskTitle={item.taskTitle}
           onRemoveClick={onRemoveClick}
           isFinished={item.isFinished}
           isMarkerChecked={isMarkerChecked}
           priority={item.priority}
+          storageKey={storageKey}
         />
       )
     });
@@ -194,37 +239,42 @@ const Layout = () => {
   const renterTabBar = () => {
     return (
       <TabBar>
-        <PlusButton onClick={() => plusButtonClicked()} />
         <Hint>
           <InfoSign />
           <PopUpBox>
+            <HintText>add a new card</HintText>
             <InfoSign />
-            <HintText>click on the plus button to add a new card</HintText>
           </PopUpBox>
         </Hint>
+        <PlusButton onClick={() => plusButtonClicked()} />
       </TabBar>
     );
   };
 
   return (
-    <CardsContext.Provider value={{ cardsArray: cardsProps }}>
-      <Container>
+
+    <Container height={window.innerHeight - 100}>
+      <HeaderWrapper>
+        <Title>{title}</Title>
         {renterTabBar()}
-        {isEditModeOpen && (
-          <EditModeCard
-            handleChange={handleChange}
-            addButtonPressed={addButtonPressed}
-            closeButtonPressed={editModeCloseButtonPressed}
-            checkBoxTypeHandler={checkBoxTypeHandler}
-          />
+      </HeaderWrapper>
+      {isEditModeOpen && (
+        <EditModeCard
+          handleChange={handleChange}
+          addButtonPressed={addButtonPressed}
+          closeButtonPressed={editModeCloseButtonPressed}
+          checkBoxTypeHandler={checkBoxTypeHandler}
+          isCheckBoxNeed
+        />
+      )}
+      {cardsProps.length !== 0 || isEditModeOpen ? (
+        <CardsArea>
+          {renderCards()}
+        </CardsArea>
+      ) : (
+          <Stub>You have no active tasks</Stub>
         )}
-        {cardsProps.length !== 0 || isEditModeOpen ? (
-          renderCards()
-        ) : (
-            <Stub>You have no active tasks</Stub>
-          )}
-      </Container>
-    </CardsContext.Provider>
+    </Container>
   );
 };
 

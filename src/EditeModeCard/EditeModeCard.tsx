@@ -34,9 +34,10 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 15px;
   margin-bottom: 20px;
-  width: 100%;
-  height: 200px;
+  width: 60%;
+  height: auto;
   border-radius: 5px;
   background-color: #cafff5;
   box-shadow: 0px 6px 3px 3px #b1e5ff;
@@ -44,7 +45,7 @@ const Container = styled.div`
 `;
 
 const Input = styled.input`
-  width: 300px;
+  width: auto;
   border: none;
   border-radius: 2px;
   border-bottom: 2px solid #a4e2ff;
@@ -130,7 +131,8 @@ type Props = {
   handleChange: (e: any) => void;
   addButtonPressed: () => void;
   closeButtonPressed: () => void;
-  checkBoxTypeHandler: (type: number) => void;
+  checkBoxTypeHandler?: (type: number) => void;
+  isCheckBoxNeed?: boolean;
   checkBox?: number;
 };
 
@@ -140,45 +142,52 @@ const EditModeCard = (props: Props) => {
     addButtonPressed,
     closeButtonPressed,
     checkBoxTypeHandler,
+    isCheckBoxNeed,
     checkBox = 0,
   } = props;
   const [checkBoxType, setCheckBox] = useState(checkBox);
 
   const typeHandler = (type: number) => {
     setCheckBox(type);
-    checkBoxTypeHandler(type);
+    checkBoxTypeHandler && checkBoxTypeHandler(type);
   };
+
+  const title = isCheckBoxNeed ? `input task` : `input section`;
+  const buttonTitle = isCheckBoxNeed ? `Add Task` : `Add Section`;
 
   return (
     <Container>
       <Close onClick={closeButtonPressed} />
-      <Title>input task</Title>
+      <Title>{title}</Title>
       <Input type="text" onChange={(e) => handleChange(e)} />
-      <Title>select priority</Title>
-      <PriorityContainer>
-        <CheckBoxItem>
-          <LowPriority
-            onClick={() => typeHandler(Priority.low)}
-            clickedBox={checkBoxType}
-          />
-          <Description>low priority</Description>
-        </CheckBoxItem>
-        <CheckBoxItem>
-          <MediumPriority
-            onClick={() => typeHandler(Priority.medium)}
-            clickedBox={checkBoxType}
-          />
-          <Description>medium priority</Description>
-        </CheckBoxItem>
-        <CheckBoxItem>
-          <HighPriority
-            onClick={() => typeHandler(Priority.max)}
-            clickedBox={checkBoxType}
-          />
-          <Description>high priority</Description>
-        </CheckBoxItem>
-      </PriorityContainer>
-      <AddButton onClick={addButtonPressed}>Add Task</AddButton>
+      {isCheckBoxNeed &&
+        <>
+          <Title>select priority</Title>
+          <PriorityContainer>
+            <CheckBoxItem>
+              <LowPriority
+                onClick={() => typeHandler(Priority.low)}
+                clickedBox={checkBoxType}
+              />
+              <Description>low priority</Description>
+            </CheckBoxItem>
+            <CheckBoxItem>
+              <MediumPriority
+                onClick={() => typeHandler(Priority.medium)}
+                clickedBox={checkBoxType}
+              />
+              <Description>medium priority</Description>
+            </CheckBoxItem>
+            <CheckBoxItem>
+              <HighPriority
+                onClick={() => typeHandler(Priority.max)}
+                clickedBox={checkBoxType}
+              />
+              <Description>high priority</Description>
+            </CheckBoxItem>
+          </PriorityContainer>
+        </>}
+      <AddButton onClick={addButtonPressed}>{buttonTitle}</AddButton>
     </Container>
   );
 };

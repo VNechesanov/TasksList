@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import styled from "styled-components";
 
 import PlusSign from "../Assets/PlusSign.svg";
-import { CardsContext, CardItem } from "../Layout/Layout";
+import { CardItem } from "../Layout/Layout";
 import { Priority, priorityColorCodes } from "../EditeModeCard/EditeModeCard";
 import { saveCardsToLocalStorage } from "../store";
 
@@ -19,7 +19,7 @@ const Container = styled.div`
   flex-direction: row;
   padding: 0;
   margin-bottom: 20px;
-  width: 100%;
+  width: 90%;
   height: 80px;
   border-radius: 5px;
   background-color: #f1fdff;
@@ -69,16 +69,17 @@ const CheckMarker = styled.div`
 
 export type CardProps = {
   id: string;
+  cardsArray: CardItem[];
   taskTitle: string;
   onRemoveClick: (filteredCards: CardItem[]) => void;
   isFinished: boolean;
   isMarkerChecked: (index: number, item: CardItem) => void;
   priority: number;
+  storageKey: string;
 };
 
 const Card = (props: CardProps) => {
-  const { id, taskTitle, onRemoveClick, isFinished, isMarkerChecked, priority } = props;
-  const { cardsArray } = useContext(CardsContext);
+  const { id, cardsArray, taskTitle, onRemoveClick, isFinished, isMarkerChecked, priority, storageKey } = props;
 
   const newCardsArr = [...cardsArray];
   let index: number = 0;
@@ -88,17 +89,17 @@ const Card = (props: CardProps) => {
     index = newCardsArr.indexOf(foundItem as CardItem);
     newCardsArr[index].isFinished = !newCardsArr[index].isFinished;
 
-    saveCardsToLocalStorage(newCardsArr);
+    saveCardsToLocalStorage(newCardsArr, storageKey);
     isMarkerChecked(index, newCardsArr[index]);
   }
 
-  saveCardsToLocalStorage(newCardsArr);
+  saveCardsToLocalStorage(newCardsArr, storageKey);
 
   const removeButtonClick = () => {
     const copiedArray = [...(cardsArray as CardItem[])];
     const filteredArray = copiedArray.filter((c) => c.id !== id);
     if (cardsArray.length === 1) {
-      saveCardsToLocalStorage([]);
+      saveCardsToLocalStorage([], storageKey);
     }
     onRemoveClick(filteredArray);
   };
