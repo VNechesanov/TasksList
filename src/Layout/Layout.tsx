@@ -264,6 +264,7 @@ const Layout = (props: Props) => {
           addButtonPressed={addButtonPressed}
           closeButtonPressed={editModeCloseButtonPressed}
           checkBoxTypeHandler={checkBoxTypeHandler}
+          isCheckBoxNeed
         />
       )}
       {cardsProps.length !== 0 || isEditModeOpen ? (

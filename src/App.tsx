@@ -37,10 +37,10 @@ const LayoutContainer = styled.div`
 
 const App = () => {
   const [layout, setLayout] = useState({ id: '', title: '', isNeedToRender: false } as LayoutItem);
-  // const [id, setId] = useState('');
 
-  const layoutsArray = useCallback((items: LayoutItem[]) => { setLayout(items.find(i => i.isNeedToRender === true) as LayoutItem) }, [])
-  // const selectedSection = useCallback((sectionId: string) => { setId(sectionId) }, [])
+  const layoutsArray = useCallback((items: LayoutItem[]) => {
+    setLayout(items.find(i => i.isNeedToRender === true) as LayoutItem)
+  }, [])
 
   return (
     <Container>

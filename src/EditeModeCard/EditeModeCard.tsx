@@ -132,6 +132,7 @@ type Props = {
   addButtonPressed: () => void;
   closeButtonPressed: () => void;
   checkBoxTypeHandler?: (type: number) => void;
+  isCheckBoxNeed?: boolean;
   checkBox?: number;
 };
 
@@ -141,6 +142,7 @@ const EditModeCard = (props: Props) => {
     addButtonPressed,
     closeButtonPressed,
     checkBoxTypeHandler,
+    isCheckBoxNeed,
     checkBox = 0,
   } = props;
   const [checkBoxType, setCheckBox] = useState(checkBox);
@@ -150,15 +152,15 @@ const EditModeCard = (props: Props) => {
     checkBoxTypeHandler && checkBoxTypeHandler(type);
   };
 
-  const title = checkBoxTypeHandler ? `input task` : `input section`;
-  const buttonTitle = checkBoxTypeHandler ? `Add Task` : `Add Section`;
+  const title = isCheckBoxNeed ? `input task` : `input section`;
+  const buttonTitle = isCheckBoxNeed ? `Add Task` : `Add Section`;
 
   return (
     <Container>
       <Close onClick={closeButtonPressed} />
       <Title>{title}</Title>
       <Input type="text" onChange={(e) => handleChange(e)} />
-      {checkBoxTypeHandler &&
+      {isCheckBoxNeed &&
         <>
           <Title>select priority</Title>
           <PriorityContainer>
