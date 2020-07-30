@@ -1,20 +1,55 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
+import _isEmpty from "lodash/isEmpty";
 
 import Layout from "../src/Layout/Layout";
+import Sections from "../src/Sections/Sections";
+
+export type LayoutItem = {
+  id: string;
+  title: string;
+  isNeedToRender: boolean;
+}
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
   padding: 0;
   margin-top: 30px;
   margin-bottom: 30px;
 `;
 
+const SectionsContainer = styled.div`
+  left: 0;
+  margin-left: 30px;
+`;
+
+const LayoutContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
 const App = () => {
+  const [layout, setLayout] = useState({ id: '', title: '', isNeedToRender: false } as LayoutItem);
+  // const [id, setId] = useState('');
+
+  const layoutsArray = useCallback((items: LayoutItem[]) => { setLayout(items.find(i => i.isNeedToRender === true) as LayoutItem) }, [])
+  // const selectedSection = useCallback((sectionId: string) => { setId(sectionId) }, [])
+
   return (
     <Container>
-      <Layout />
+      <SectionsContainer>
+        <Sections getLayoutsArray={layoutsArray} />
+      </SectionsContainer>
+      <LayoutContainer>
+        {!_isEmpty(layout) && <Layout storageKey={layout.id} title={layout.title} />}
+      </LayoutContainer>
     </Container>
   );
 };
