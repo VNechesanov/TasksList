@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import _uniqueId from "lodash/uniqueId";
 import _isEqual from "lodash/isEqual";
 
 import Card from "../Card/Card";
 import EditModeCard from "../EditeModeCard/EditeModeCard";
-import PlusSign from "../Assets/PlusSign.svg";
-import InfoLogo from "../Assets/InfoLogo.svg";
+import BaseContainer from "../BaseContainer/BaseContainer";
+import TabBar from "../TabBar/TabBar";
 import { getCardsfromLocalStorage } from "../store";
 
 export type CardItem = {
@@ -15,97 +15,6 @@ export type CardItem = {
   priority: number;
   isFinished: boolean;
 };
-
-type ContainerHeight = {
-  height: number;
-}
-
-const Container = styled.div<ContainerHeight>`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px;
-  width: 80%;
-  height: ${(props) => `${props.height}px`};
-  border-radius: 5px;
-  background-color: #ddfaff;
-  box-shadow: 0px 6px 3px 3px #70cede;
-`;
-
-const TabBar = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  width: 50%;
-  margin-bottom: 15px;
-  margin-right: 58px;
-  margin-bottom: 15px;
-`;
-
-const PlusButton = styled.div`
-  background: url(${PlusSign});
-  width: 15px;
-  height: 15px;
-  background-size: 100% 100%;
-  margin-bottom: 15px;
-  cursor: pointer;
-`;
-
-const InfoSign = styled.div`
-  background: url(${InfoLogo});
-  min-width: 15px;
-  min-height: 15px;
-  background-size: 100% 100%;
-  margin-bottom: 15px;
-  margin-left: 5px;
-  cursor: pointer;
-`;
-
-const hintAnimation = keyframes`
-  from {
-  opacity: 0;
-  }
-
-  to {
-  opacity: 1;
-  }
-`;
-
-const Hint = styled.div`
-  position: relative;
-  margin-right: 15px;
-  align-self: center;
-  text-align: center;
-`;
-
-const PopUpBox = styled.div`
-  position: absolute;
-  visibility: hidden;
-  white-space: nowrap;
-  width: 104px;
-  overflow: hidden;
-  display: flex;
-  height: 16px;
-  font-size: 11px;
-  line-height: 12px;
-  color: #a9a9a9;
-  border-radius: 5px 16px 16px 5px;
-  line-height: 16px;
-  padding: 8px 10px;
-  top: -8px;
-  left: -95px;
-  background-color: #fff;
-  box-shadow: 5px 12px 32px rgba(147, 147, 149, 0.2);
-
-  ${Hint}:hover & {
-    visibility: visible;
-    animation: ${hintAnimation} 0.3s ${(props) => props.theme.animationTiming};
-  }
-`;
-
-const HintText = styled.div`
-  margin-left: 5px;
-`;
 
 const Stub = styled.div`
   display: flex;
@@ -191,8 +100,8 @@ const Layout = (props: Props) => {
     setCardProps(copiedCardsProps);
   }
 
-  const plusButtonClicked = () => {
-    setEditModeState(true);
+  const onClick = (status: boolean) => {
+    setEditModeState(status);
   };
 
   useEffect(() => {
@@ -236,27 +145,12 @@ const Layout = (props: Props) => {
     return cardsArr;
   };
 
-  const renterTabBar = () => {
-    return (
-      <TabBar>
-        <Hint>
-          <InfoSign />
-          <PopUpBox>
-            <HintText>add a new card</HintText>
-            <InfoSign />
-          </PopUpBox>
-        </Hint>
-        <PlusButton onClick={() => plusButtonClicked()} />
-      </TabBar>
-    );
-  };
-
   return (
 
-    <Container height={window.innerHeight - 100}>
+    <BaseContainer width='80%'>
       <HeaderWrapper>
         <Title>{title}</Title>
-        {renterTabBar()}
+        <TabBar onClick={onClick} />
       </HeaderWrapper>
       {isEditModeOpen && (
         <EditModeCard
@@ -274,7 +168,7 @@ const Layout = (props: Props) => {
       ) : (
           <Stub>You have no active tasks</Stub>
         )}
-    </Container>
+    </BaseContainer>
   );
 };
 
