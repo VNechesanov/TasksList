@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import moment from 'moment';
+import _groupBy from 'lodash/groupBy';
+import _map from 'lodash/map';
 import styled from "styled-components";
 
 import { LayoutItem } from "../App";
@@ -23,6 +26,31 @@ const Stub = styled.div`
   height: 100%;
   align-items: center;
   text-align: center;
+`;
+
+const SectionTitle = styled.div`
+  font-size: 15px;
+  color: #F2F2F2;
+  font-weight: 200;
+  margin-bottom: 15px;
+`;
+
+const SectionContainer = styled.div`
+  width: 90%;
+  height: auto;
+  border-radius: 5px;
+  background-color: #868686;
+  margin-bottom: 15px;
+  padding: 15px;
+`;
+
+const SectionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow-y: scroll;
 `;
 
 type Props = {
@@ -51,6 +79,7 @@ const Sections = (props: Props) => {
         id: sectionId,
         title: taskTitle,
         isNeedToRender: true,
+        date: moment().unix() * 1000,
       }));
     } else {
       const copiedArray: LayoutItem[] = [...layoutItems];
@@ -63,6 +92,7 @@ const Sections = (props: Props) => {
         id: sectionId,
         title: taskTitle,
         isNeedToRender: true,
+        date: moment().unix() * 1000,
       })
 
       setLayoutItems(completedArray);
@@ -79,9 +109,18 @@ const Sections = (props: Props) => {
 
   const renderSections = () => {
     const sections = getSectionsFromLocalStorage();
+    const groupedData = _groupBy(sections, s => moment(s.date).format('YYYY, MMM-DD'))
 
-    return sections.map(s => {
-      return <SectionItem id={s.id} title={s.title} layoutItems={layoutItems} layoutItemsUpdate={layoutItemsUpdate} />
+    return _map(groupedData, (values, key) => {
+      const marker = key === moment().format('YYYY, MMM-DD') ? '(this day)' : '';
+
+      return <SectionContainer>
+        <SectionTitle>{`${key} ${marker}`}</SectionTitle>
+        {values.map(s => {
+          return <SectionItem id={s.id} title={s.title} layoutItems={layoutItems} layoutItemsUpdate={layoutItemsUpdate} />
+        })}
+
+      </SectionContainer>
     })
   }
 
@@ -102,7 +141,9 @@ const Sections = (props: Props) => {
           closeButtonPressed={editModeCloseButtonPressed}
         />
       )}
-      {layoutItems.length !== 0 || isEditModeOpen ? renderSections() : <Stub>You have no sections</Stub>}
+      <SectionArea>
+        {layoutItems.length !== 0 || isEditModeOpen ? renderSections() : <Stub>You have no sections</Stub>}
+      </SectionArea>
     </BaseContainer>
   )
 };
